@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .file-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Dashboard</h1>
+            <a href="/" class="btn btn-outline-secondary">Volver a Inicio</a>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Resumen de Archivos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h3 class="card-title" id="files-count">-</h3>
+                                <p class="card-text">Archivos Procesados</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h3 class="card-title" id="total-size">-</h3>
+                                <p class="card-text">Tamaño Total</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5 class="mt-4">Archivos Individuales</h5>
+                <div class="file-buttons" id="file-buttons">
+                    <!-- Los botones se generarán dinámicamente -->
+                </div>
+                
+                <h5 class="mt-4">Datos del Dashboard</h5>
+                <pre id="dashboard-data">Cargando datos...</pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Cargar datos del dashboard
+        fetch('/api/dashboard-data')
+            .then(response => response.json())
+            .then(data => {
+                // Actualizar contadores
+                document.getElementById('files-count').textContent = data.files_count;
+                document.getElementById('total-size').textContent = formatFileSize(data.total_size);
+                
+                // Generar botones de archivos
+                const buttonContainer = document.getElementById('file-buttons');
+                data.files_summary.forEach(file => {
+                    const button = document.createElement('a');
+                    button.href = `/detail/${file.id}`;
+                    button.className = 'btn btn-primary';
+                    button.textContent = `Archivo ${file.id}: ${file.name}`;
+                    buttonContainer.appendChild(button);
+                });
+                
+                // Mostrar datos completos
+                document.getElementById('dashboard-data').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('Error al cargar datos:', error);
+                document.getElementById('dashboard-data').textContent = 'Error al cargar datos';
+            });
+            
+        // Formatear tamaño de archivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Archivo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 900px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Detalle del Archivo</h1>
+            <div>
+                <a href="/dashboard" class="btn btn-primary me-2">Volver al Dashboard</a>
+                <a href="/" class="btn btn-outline-secondary">Volver a Inicio</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" id="file-name">{{ file.name }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h3 class="card-title" id="file-id">{{ file.id }}</h3>
+                                <p class="card-text">ID del Archivo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h3 class="card-title" id="file-size">{{ file.size }} bytes</h3>
+                                <p class="card-text">Tamaño</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h3 class="card-title" id="file-type">{{ file.type }}</h3>
+                                <p class="card-text">Tipo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5>Datos Detallados</h5>
+                <pre id="file-data">Cargando datos...</pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Cargar datos detallados del archivo
+        const fileId = {{ file.id }};
+        
+        fetch(`/api/file-detail/${fileId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar datos completos
+                document.getElementById('file-data').textContent = JSON.stringify(data, null, 2);
+                
+                // Actualizar UI con datos formateados si es necesario
+                document.getElementById('file-size').textContent = formatFileSize(data.basic_info.size);
+            })
+            .catch(error => {
+                console.error('Error al cargar datos:', error);
+                document.getElementById('file-data').textContent = 'Error al cargar datos';
+            });
+            
+        // Formatear tamaño de archivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
