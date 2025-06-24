@@ -44,8 +44,6 @@ def list_ecoli_files():
         'genomas': resultados
     })
 
-bp = Blueprint('files', __name__)
-
 @bp.route('/compare-to-ecoli', methods=['GET'])
 def compare_to_ecoli():
     upload_folder = current_app.config['UPLOAD_FOLDER']
