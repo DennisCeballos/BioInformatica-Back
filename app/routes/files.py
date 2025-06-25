@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app , send_file
 from werkzeug.utils import secure_filename
 import os
 from .. import storage, utils
@@ -8,16 +8,18 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import importlib.resources as pkg_resources
 import pandas as pd
+import json
 
 bp = Blueprint('files', __name__)
 
 @bp.route('/ecoli/list', methods=['GET'])
 def list_ecoli_files():
     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
+
     if not os.path.exists(folder):
         return jsonify({'error': 'Carpeta Ecoli-files no encontrada'}), 404
 
-    archivos = [f for f in os.listdir(folder) if f.endswith(('.gb', '.genbank', '.fasta', '.fa','fna'))]
+    archivos = [f for f in os.listdir(folder) if f.endswith(('.gb', '.genbank', '.fasta', '.fa', 'fna'))]
     resultados = []
 
     for filename in archivos:
@@ -39,6 +41,10 @@ def list_ecoli_files():
                 'archivo': filename,
                 'error': f'Error al leer: {str(e)}'
             })
+
+    history_path = os.path.join(folder, 'ecoli_history.json')
+    with open(history_path, 'w') as f:
+        json.dump(resultados, f, indent=2)
 
     return jsonify({
         'total': len(resultados),
@@ -210,18 +216,19 @@ def get_fragment():
         return jsonify({'error': str(e)}), 400
     
 # Descargar historial de comparaciones como CSV
-@bp.route('/history/csv', methods=['GET'])
-def download_history_csv():
-    history_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'comparison_history.json')
-    if not os.path.exists(history_path):
-        return jsonify({'error': 'No hay historial'}), 404
+@bp.route('/ecoli/history/csv', methods=['GET'])
+def download_ecoli_history_csv():
+    folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
+    json_path = os.path.join(folder, 'ecoli_history.json')
 
-    df = pd.read_json(history_path)
-    csv_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'comparison_history.csv')
+    if not os.path.exists(json_path):
+        return jsonify({'error': 'No hay historial disponible'}), 404
+
+    df = pd.read_json(json_path)
+    csv_path = os.path.join(folder, 'ecoli_history.csv')
     df.to_csv(csv_path, index=False)
 
-    return jsonify({'message': 'Historial convertido a CSV', 'csv_path': csv_path})
-
+    return send_file(csv_path, as_attachment=True)
 # # Estadísticas avanzadas con pandas
 # @bp.route('/ecoli/stats-pandas', methods=['GET'])
 # def ecoli_stats_pandas():

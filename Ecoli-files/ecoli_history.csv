@@ -1,0 +1,16 @@
+archivo,id,descripcion,longitud,formato
+GCA_001721125.1_ASM172112v1_genomic.fna,CP012693.1,"CP012693.1 Escherichia coli strain FORC_028 chromosome, complete genome",5704396,fasta
+GCA_002079225.1_ASM207922v1_genomic.fna,CP020543.1,"CP020543.1 Escherichia coli C chromosome, complete genome",4617024,fasta
+GCA_003018035.1_ASM301803v1_genomic.fna,CP027390.1,"CP027390.1 Escherichia coli strain 2015C-4944 chromosome, complete genome",5802748,fasta
+GCA_004358405.1_ASM435840v1_genomic.fna,CP037943.1,"CP037943.1 Escherichia coli strain CFSAN027343 chromosome, complete genome",5689156,fasta
+GCA_013166975.1_ASM1316697v1_genomic.fna,CP053601.1,"CP053601.1 Escherichia coli BL21 chromosome, complete genome",4529413,fasta
+GCA_014058445.2_ASM1405844v2_genomic.fna,CP058682.2,"CP058682.2 Escherichia coli strain MBT-5 chromosome, complete genome",5705580,fasta
+GCA_027925505.1_ASM2792550v1_genomic.fna,AP027159.1,"AP027159.1 Escherichia coli O26:H11 2313 DNA, complete genome",5703439,fasta
+GCA_027925565.1_ASM2792556v1_genomic.fna,AP027162.1,"AP027162.1 Escherichia coli O26:H11 EH031 DNA, complete genome",5730399,fasta
+GCA_027925745.1_ASM2792574v1_genomic.fna,AP027176.1,"AP027176.1 Escherichia coli O26:H11 EH2252 DNA, complete genome",5770266,fasta
+GCA_027925765.1_ASM2792576v1_genomic.fna,AP027181.1,"AP027181.1 Escherichia coli O26:H11 98E11 DNA, complete genome",5767030,fasta
+GCA_027925785.1_ASM2792578v1_genomic.fna,AP027185.1,"AP027185.1 Escherichia coli O26:H11 NIID080884 DNA, complete genome",5747479,fasta
+GCA_027925805.1_ASM2792580v1_genomic.fna,AP027188.1,"AP027188.1 Escherichia coli O26:H11 PV0838 DNA, complete genome",5770126,fasta
+GCA_027925845.1_ASM2792584v1_genomic.fna,AP027197.1,"AP027197.1 Escherichia coli O26:H11 02E060 DNA, complete genome",5722815,fasta
+GCA_032382315.1_ASM3238231v1_genomic.fna,CP135671.1,"CP135671.1 Escherichia coli strain TUM9803 chromosome, complete genome",5712798,fasta
+GCA_040571365.1_ASM4057136v1_genomic.fna,CP159877.1,"CP159877.1 Escherichia coli strain 12867 chromosome, complete genome",5685925,fasta

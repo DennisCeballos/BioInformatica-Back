@@ -1,0 +1,107 @@
+[
+  {
+    "archivo": "GCA_001721125.1_ASM172112v1_genomic.fna",
+    "id": "CP012693.1",
+    "descripcion": "CP012693.1 Escherichia coli strain FORC_028 chromosome, complete genome",
+    "longitud": 5704396,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_002079225.1_ASM207922v1_genomic.fna",
+    "id": "CP020543.1",
+    "descripcion": "CP020543.1 Escherichia coli C chromosome, complete genome",
+    "longitud": 4617024,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_003018035.1_ASM301803v1_genomic.fna",
+    "id": "CP027390.1",
+    "descripcion": "CP027390.1 Escherichia coli strain 2015C-4944 chromosome, complete genome",
+    "longitud": 5802748,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_004358405.1_ASM435840v1_genomic.fna",
+    "id": "CP037943.1",
+    "descripcion": "CP037943.1 Escherichia coli strain CFSAN027343 chromosome, complete genome",
+    "longitud": 5689156,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_013166975.1_ASM1316697v1_genomic.fna",
+    "id": "CP053601.1",
+    "descripcion": "CP053601.1 Escherichia coli BL21 chromosome, complete genome",
+    "longitud": 4529413,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_014058445.2_ASM1405844v2_genomic.fna",
+    "id": "CP058682.2",
+    "descripcion": "CP058682.2 Escherichia coli strain MBT-5 chromosome, complete genome",
+    "longitud": 5705580,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925505.1_ASM2792550v1_genomic.fna",
+    "id": "AP027159.1",
+    "descripcion": "AP027159.1 Escherichia coli O26:H11 2313 DNA, complete genome",
+    "longitud": 5703439,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925565.1_ASM2792556v1_genomic.fna",
+    "id": "AP027162.1",
+    "descripcion": "AP027162.1 Escherichia coli O26:H11 EH031 DNA, complete genome",
+    "longitud": 5730399,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925745.1_ASM2792574v1_genomic.fna",
+    "id": "AP027176.1",
+    "descripcion": "AP027176.1 Escherichia coli O26:H11 EH2252 DNA, complete genome",
+    "longitud": 5770266,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925765.1_ASM2792576v1_genomic.fna",
+    "id": "AP027181.1",
+    "descripcion": "AP027181.1 Escherichia coli O26:H11 98E11 DNA, complete genome",
+    "longitud": 5767030,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925785.1_ASM2792578v1_genomic.fna",
+    "id": "AP027185.1",
+    "descripcion": "AP027185.1 Escherichia coli O26:H11 NIID080884 DNA, complete genome",
+    "longitud": 5747479,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925805.1_ASM2792580v1_genomic.fna",
+    "id": "AP027188.1",
+    "descripcion": "AP027188.1 Escherichia coli O26:H11 PV0838 DNA, complete genome",
+    "longitud": 5770126,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_027925845.1_ASM2792584v1_genomic.fna",
+    "id": "AP027197.1",
+    "descripcion": "AP027197.1 Escherichia coli O26:H11 02E060 DNA, complete genome",
+    "longitud": 5722815,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_032382315.1_ASM3238231v1_genomic.fna",
+    "id": "CP135671.1",
+    "descripcion": "CP135671.1 Escherichia coli strain TUM9803 chromosome, complete genome",
+    "longitud": 5712798,
+    "formato": "fasta"
+  },
+  {
+    "archivo": "GCA_040571365.1_ASM4057136v1_genomic.fna",
+    "id": "CP159877.1",
+    "descripcion": "CP159877.1 Escherichia coli strain 12867 chromosome, complete genome",
+    "longitud": 5685925,
+    "formato": "fasta"
+  }
+]
