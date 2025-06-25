@@ -7,6 +7,8 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import importlib.resources as pkg_resources
+import pandas as pd
+
 
 bp = Blueprint('files', __name__)
 
@@ -129,78 +131,122 @@ def upload_files():
         'path': save_path,
         'upload_time': datetime.now().isoformat()
     })
+# Endpoint para obtener solo estadísticas generales
+@bp.route('/ecoli/stats', methods=['GET'])
+def ecoli_stats():
+    folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
+    archivos = [f for f in os.listdir(folder) if f.endswith(('.gb', '.genbank', '.fasta', '.fa', 'fna'))]
+    longitudes = []
 
-# @bp.route('/upload', methods=['POST'])
-# def upload():
-#     client_id = request.headers.get('X-Client-ID')
-#     if not client_id:
-#         return jsonify({'error': 'Falta encabezado X-Client-ID'}), 400
+    for f in archivos:
+        try:
+            fmt = 'genbank' if 'gb' in f.lower() else 'fasta'
+            record = next(SeqIO.parse(os.path.join(folder, f), fmt))
+            longitudes.append(len(record.seq))
+        except:
+            continue
 
-#     if 'files' not in request.files:
-#         return jsonify({'error': 'No se enviaron archivos'}), 400
+    if not longitudes:
+        return jsonify({'error': 'No se pudieron leer los archivos'}), 400
 
-#     files = request.files.getlist('files')
-#     if not files:
-#         return jsonify({'error': 'Lista de archivos vacía'}), 400
+    return jsonify({
+        'total_archivos': len(longitudes),
+        'promedio_longitud': round(sum(longitudes)/len(longitudes), 2),
+        'longitud_maxima': max(longitudes),
+        'longitud_minima': min(longitudes)
+    })
+# Endpoint para buscar un gen específico dentro de los genomas
+@bp.route('/ecoli/search', methods=['GET'])
+def search_gene():
+    query = request.args.get('q', '').lower()
+    folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
 
-#     file_infos = []
+    if not query:
+        return jsonify({'error': 'Parámetro de búsqueda "q" requerido'}), 400
 
-#     for i, file in enumerate(files):
-#         filename = secure_filename(file.filename)
-#         path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-#         file.save(path)
-#         info = utils.build_file_info(i, file, path)
-#         file_infos.append(info)
+    resultados = []
+    for f in os.listdir(folder):
+        if f.endswith(('.gb', '.genbank', '.fasta', '.fa', 'fna')):
+            fmt = 'genbank' if 'gb' in f.lower() else 'fasta'
+            try:
+                record = next(SeqIO.parse(os.path.join(folder, f), fmt))
+                if query in record.id.lower() or query in record.description.lower():
+                    resultados.append({
+                        'archivo': f,
+                        'id': record.id,
+                        'descripcion': record.description,
+                        'longitud': len(record.seq)
+                    })
+            except:
+                continue
 
-#     storage.store_files(client_id, file_infos)
+    return jsonify({'resultados': resultados, 'total': len(resultados)})
 
-#     return jsonify({'message': 'Archivos subidos correctamente', 'files': file_infos}), 201
+# Endpoint para obtener regiones o fragmentos del genoma
+@bp.route('/ecoli/fragment', methods=['GET'])
+def get_fragment():
+    filename = request.args.get('file')
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', start + 1000))
 
-# @bp.route('/dashboard', methods=['GET'])
-# def dashboard():
-#     client_id = request.headers.get('X-Client-ID')
-#     if not client_id:
-#         return jsonify({'error': 'Falta encabezado X-Client-ID'}), 400
+    if not filename:
+        return jsonify({'error': 'Archivo requerido'}), 400
 
-#     files = storage.get_files(client_id)
-#     if not files:
-#         return jsonify({'error': 'No hay archivos para este cliente'}), 404
-
-#     dashboard_data = {
-#         'files_count': len(files),
-#         'total_size': sum(f['size'] for f in files),
-#         'file_types': {},
-#         'statistics': {
-#             'average_size': sum(f['size'] for f in files) / len(files),
-#             'largest_file': max(files, key=lambda x: x['size'])['name'],
-#             'smallest_file': min(files, key=lambda x: x['size'])['name']
-#         },
-#         'files_summary': files,
-#         'status': 'completed'
-#     }
-
-#     for f in files:
-#         t = f['type']
-#         dashboard_data['file_types'][t] = dashboard_data['file_types'].get(t, 0) + 1
-
-#     return jsonify(dashboard_data)
-
-# @bp.route('/file/<int:file_id>', methods=['GET'])
-# def file_detail(file_id):
-    client_id = request.headers.get('X-Client-ID')
-    if not client_id:
-        return jsonify({'error': 'Falta encabezado X-Client-ID'}), 400
-
-    file = storage.get_file_by_id(client_id, file_id)
-    if not file:
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files', filename))
+    if not os.path.exists(path):
         return jsonify({'error': 'Archivo no encontrado'}), 404
 
-    # Puedes expandir esto con análisis de contenido si deseas
-    return jsonify({
-        'basic_info': file,
-        'analysis': {
-            'structure_valid': True,
-            'summary': 'Archivo procesado correctamente.',
-            'schema_check': 'ok'
-        }
-    })
+    fmt = 'genbank' if 'gb' in filename.lower() else 'fasta'
+    try:
+        record = next(SeqIO.parse(path, fmt))
+        fragment = str(record.seq[start:end])
+        return jsonify({
+            'archivo': filename,
+            'desde': start,
+            'hasta': end,
+            'fragmento': fragment
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
+# Descargar historial de comparaciones como CSV
+@bp.route('/history/csv', methods=['GET'])
+def download_history_csv():
+    history_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'comparison_history.json')
+    if not os.path.exists(history_path):
+        return jsonify({'error': 'No hay historial'}), 404
+
+    df = pd.read_json(history_path)
+    csv_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'comparison_history.csv')
+    df.to_csv(csv_path, index=False)
+
+    return jsonify({'message': 'Historial convertido a CSV', 'csv_path': csv_path})
+# Estadísticas avanzadas con pandas
+@bp.route('/ecoli/stats-pandas', methods=['GET'])
+def ecoli_stats_pandas():
+    folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
+    data = []
+
+    for f in os.listdir(folder):
+        if f.endswith(('.gb', '.genbank', '.fasta', '.fa', 'fna')):
+            fmt = 'genbank' if 'gb' in f.lower() else 'fasta'
+            try:
+                record = next(SeqIO.parse(os.path.join(folder, f), fmt))
+                data.append({
+                    'archivo': f,
+                    'longitud': len(record.seq),
+                    'formato': fmt
+                })
+            except:
+                continue
+
+    df = pd.DataFrame(data)
+    resumen = {
+        'total': df.shape[0],
+        'promedio': df['longitud'].mean(),
+        'minimo': df['longitud'].min(),
+        'maximo': df['longitud'].max(),
+        'por_formato': df['formato'].value_counts().to_dict()
+    }
+
+    return jsonify(resumen)
