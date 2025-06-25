@@ -9,7 +9,6 @@ from Bio.SeqRecord import SeqRecord
 import importlib.resources as pkg_resources
 import pandas as pd
 
-
 bp = Blueprint('files', __name__)
 
 @bp.route('/ecoli/list', methods=['GET'])
@@ -110,7 +109,6 @@ def compare_to_ecoli():
         'comparaciones': comparaciones
     })
 
-
 @bp.route('/upload', methods=['POST'])
 def upload_files():
     if 'file' not in request.files:
@@ -131,6 +129,7 @@ def upload_files():
         'path': save_path,
         'upload_time': datetime.now().isoformat()
     })
+
 # Endpoint para obtener solo estadísticas generales
 @bp.route('/ecoli/stats', methods=['GET'])
 def ecoli_stats():
@@ -155,6 +154,7 @@ def ecoli_stats():
         'longitud_maxima': max(longitudes),
         'longitud_minima': min(longitudes)
     })
+
 # Endpoint para buscar un gen específico dentro de los genomas
 @bp.route('/ecoli/search', methods=['GET'])
 def search_gene():
@@ -221,32 +221,35 @@ def download_history_csv():
     df.to_csv(csv_path, index=False)
 
     return jsonify({'message': 'Historial convertido a CSV', 'csv_path': csv_path})
-# Estadísticas avanzadas con pandas
-@bp.route('/ecoli/stats-pandas', methods=['GET'])
-def ecoli_stats_pandas():
-    folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
-    data = []
 
-    for f in os.listdir(folder):
-        if f.endswith(('.gb', '.genbank', '.fasta', '.fa', 'fna')):
-            fmt = 'genbank' if 'gb' in f.lower() else 'fasta'
-            try:
-                record = next(SeqIO.parse(os.path.join(folder, f), fmt))
-                data.append({
-                    'archivo': f,
-                    'longitud': len(record.seq),
-                    'formato': fmt
-                })
-            except:
-                continue
+# # Estadísticas avanzadas con pandas
+# @bp.route('/ecoli/stats-pandas', methods=['GET'])
+# def ecoli_stats_pandas():
+#     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Ecoli-files'))
+#     data = []
 
-    df = pd.DataFrame(data)
-    resumen = {
-        'total': df.shape[0],
-        'promedio': df['longitud'].mean(),
-        'minimo': df['longitud'].min(),
-        'maximo': df['longitud'].max(),
-        'por_formato': df['formato'].value_counts().to_dict()
-    }
+#     for f in os.listdir(folder):
+#         if f.endswith(('.gb', '.genbank', '.fasta', '.fa', 'fna')):
+#             fmt = 'genbank' if 'gb' in f.lower() else 'fasta'
+#             try:
+#                 record = next(SeqIO.parse(os.path.join(folder, f), fmt))
+#                 data.append({
+#                     'archivo': f,
+#                     'longitud': len(record.seq),
+#                     'formato': fmt
+#                 })
+#             except:
+#                 continue
 
-    return jsonify(resumen)
+#     df = pd.DataFrame(data)
+
+#     # Convierte valores a tipos nativos de Python
+#     resumen = {
+#         'total': int(df.shape[0]),
+#         'promedio': float(df['longitud'].mean()) if not df.empty else 0,
+#         'minimo': int(df['longitud'].min()) if not df.empty else 0,
+#         'maximo': int(df['longitud'].max()) if not df.empty else 0,
+#         'por_formato': {k: int(v) for k, v in df['formato'].value_counts().to_dict().items()}
+#     }
+
+#     return jsonify(resumen)
